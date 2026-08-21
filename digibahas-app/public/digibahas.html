@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGIBAHAS — Digitalisasi Gerakan Bijak Berbahasa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16233F;
+    --navy-2:#0B2A52;
+    --navy-3:#1B2A4D;
+    --teal:#0E8C93;
+    --teal-deep:#0A6E74;
+    --teal-light:#CDEFEC;
+    --mint:#7FE9DD;
+    --sky-top:#DCEFFB;
+    --sky-bot:#F3FAFE;
+    --hill-dark:#7A9A1E;
+    --hill-light:#B9CE5B;
+    --grey-bg:#EEF0EF;
+    --ink:#1D2333;
+    --ink-soft:#5B6472;
+    --line:#E2E5E8;
+    --white:#FFFFFF;
+    --green:#3FA34D;
+    --coral:#D6473C;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--white); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--mint); color:var(--navy);}
+  a{color:inherit; text-decoration:none;}
+  .disp{font-family:'Sora',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  button{font-family:'Inter',sans-serif;}
+
+  /* ---------- header ---------- */
+  header{position:sticky; top:0; z-index:60; background:rgba(255,255,255,0.94); backdrop-filter:blur(8px); border-bottom:2px solid var(--navy);}
+  .headbar{max-width:1220px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:14px;}
+  .logo{font-family:'Sora',sans-serif; font-weight:800; font-size:1.3rem; color:var(--navy); letter-spacing:-0.01em;}
+  nav.tabs{display:flex; gap:26px; align-items:center;}
+  nav.tabs button{font-weight:600; font-size:0.92rem; border:none; background:none; color:var(--navy); cursor:pointer; padding:6px 2px; position:relative;}
+  nav.tabs button.active{color:var(--teal-deep);}
+  nav.tabs button.active::after{content:''; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:var(--teal-deep);}
+  .cta-mini{font-weight:700; font-size:0.86rem; background:var(--navy); color:#fff; border:none; padding:11px 22px; border-radius:999px; cursor:pointer;}
+  .cta-mini:hover{background:var(--navy-3);}
+  @media (max-width:960px){ nav.tabs{display:none;} }
+  .mobile-tabs{display:none; gap:8px; overflow-x:auto; padding:10px 20px 14px; border-bottom:1px solid var(--line);}
+  .mobile-tabs button{flex:0 0 auto; font-weight:600; font-size:0.82rem; border:1px solid var(--line); background:var(--white); color:var(--navy); padding:8px 14px; border-radius:999px;}
+  .mobile-tabs button.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  @media (max-width:960px){ .mobile-tabs{display:flex;} }
+
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ---------- illustration ---------- */
+  .illus{border-radius:20px; overflow:hidden; position:relative; background:linear-gradient(var(--sky-top), var(--sky-bot));}
+  .illus svg{display:block; width:100%; height:100%;}
+
+  /* ---------- beranda hero ---------- */
+  .beranda-top{max-width:1220px; margin:0 auto; padding:64px 24px 20px; text-align:center;}
+  .beranda-top h1{font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.9rem,3.6vw,2.7rem); color:var(--navy); margin:0 0 12px; letter-spacing:-0.01em;}
+  .beranda-top p{font-size:1.02rem; color:var(--ink-soft); max-width:64ch; margin:0 auto; line-height:1.6;}
+  .hero-cards{max-width:1220px; margin:38px auto 0; padding:0 24px 70px; display:grid; grid-template-columns:1.4fr 1fr; gap:24px;}
+  @media (max-width:880px){ .hero-cards{grid-template-columns:1fr;} }
+  .card-elearn{border-radius:20px; overflow:hidden; position:relative; min-height:340px; display:flex; flex-direction:column; justify-content:flex-start; padding:34px 32px;}
+  .card-elearn h3{font-family:'Sora',sans-serif; font-size:1.5rem; color:var(--navy); margin:14px 0 12px; font-weight:700;}
+  .card-elearn p{font-size:0.95rem; color:var(--navy-3); max-width:38ch; line-height:1.6; position:relative; z-index:2;}
+  .cap-icon{font-size:1.9rem;}
+  .card-kbbi{background:var(--teal); border-radius:20px; padding:32px 30px; color:#fff; display:flex; flex-direction:column;}
+  .card-kbbi .qicon{width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; font-size:1.3rem; margin-bottom:16px;}
+  .card-kbbi h3{font-family:'Sora',sans-serif; font-size:1.4rem; margin:0 0 10px;}
+  .card-kbbi p{font-size:0.92rem; color:#E4FBF8; line-height:1.6; margin:0 0 auto; flex:1;}
+  .kbbi-search{display:flex; gap:8px; margin-top:18px;}
+  .kbbi-search input{flex:1; border:none; border-radius:10px; padding:12px 14px; font-family:'Inter',sans-serif; font-size:0.9rem;}
+  .kbbi-search button{border:none; background:var(--navy); color:#fff; border-radius:10px; padding:0 16px; cursor:pointer; font-weight:700;}
+
+  /* ---------- generic section ---------- */
+  section.block{max-width:1220px; margin:0 auto; padding:66px 24px;}
+  .kicker{font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--teal-deep); font-weight:600; margin:0 0 10px;}
+  h2.sec-title{font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.5rem,2.6vw,2.05rem); color:var(--navy); margin:0 0 14px; letter-spacing:-0.01em;}
+  p.sec-lede{font-size:1rem; line-height:1.7; color:var(--ink-soft); max-width:70ch; margin:0 0 40px;}
+
+  /* pillars */
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:880px){ .pillars{grid-template-columns:1fr;} }
+  .pillar{background:var(--white); border:1.5px solid var(--line); border-radius:var(--radius); padding:26px 22px; cursor:pointer; transition:.2s;}
+  .pillar:hover{border-color:var(--teal); box-shadow:0 12px 26px rgba(14,140,147,0.12); transform:translateY(-3px);}
+  .pillar .num{font-family:'IBM Plex Mono',monospace; color:#B8BFC7; font-size:0.85rem; font-weight:600;}
+  .pillar h3{font-family:'Sora',sans-serif; font-size:1.15rem; margin:10px 0 8px; color:var(--navy);}
+  .pillar p{font-size:0.89rem; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;}
+  .badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.65rem; font-weight:600; background:var(--mint); color:var(--navy); padding:4px 9px; border-radius:5px;}
+  .pillar .go{margin-top:10px; font-weight:700; font-size:0.83rem; color:var(--teal-deep);}
+
+  /* about */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start;}
+  @media (max-width:880px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{font-size:0.98rem; line-height:1.75; color:var(--ink-soft); margin:0 0 14px;}
+  .acronym-box{background:var(--grey-bg); border-radius:var(--radius); padding:24px;}
+  .acronym-box .word{display:flex; gap:12px; padding:9px 0; border-bottom:1px dashed var(--line); align-items:baseline;}
+  .acronym-box .word:last-child{border-bottom:none;}
+  .acronym-box .letter{font-family:'Sora',sans-serif; font-weight:800; color:var(--teal-deep); font-size:1.1rem; width:56px; flex:0 0 auto;}
+  .acronym-box .text{font-size:0.9rem; color:var(--ink-soft);}
+
+  /* CTA banner */
+  .cta-banner{background:var(--teal); border-radius:24px; padding:46px 40px; color:#fff; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;}
+  .cta-banner h2{font-family:'Sora',sans-serif; font-size:clamp(1.4rem,2.6vw,2rem); margin:0 0 10px; font-weight:800;}
+  .cta-banner p{font-size:0.94rem; color:#E4FBF8; max-width:48ch; margin:0;}
+  .cta-banner .btns{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn-light{background:#fff; color:var(--teal-deep); border:none; font-weight:700; padding:13px 22px; border-radius:10px; cursor:pointer;}
+  .btn-outline-light{background:transparent; border:1.5px solid rgba(255,255,255,0.6); color:#fff; font-weight:700; padding:12px 20px; border-radius:10px; cursor:pointer;}
+
+  /* ---------- E-Learning page ---------- */
+  .elearn-hero{max-width:1220px; margin:0 auto; padding:56px 24px 10px; display:grid; grid-template-columns:1.1fr 1fr; gap:36px; align-items:center;}
+  @media (max-width:880px){ .elearn-hero{grid-template-columns:1fr;} }
+  .elearn-hero h1{font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.7rem,3.4vw,2.3rem); color:var(--navy); margin:0 0 14px; line-height:1.15;}
+  .elearn-hero p{font-size:0.98rem; color:var(--ink-soft); line-height:1.65; margin:0 0 22px;}
+  .search-bar{display:flex; align-items:center; gap:10px; background:var(--grey-bg); border-radius:12px; padding:13px 16px;}
+  .search-bar input{flex:1; border:none; background:none; font-size:0.94rem; font-family:'Inter',sans-serif; outline:none;}
+  .elearn-illus{border-radius:18px; overflow:hidden; height:220px;}
+
+  .kategori-row{display:grid; grid-template-columns:1.3fr 1fr; gap:20px; margin-bottom:56px;}
+  @media (max-width:880px){ .kategori-row{grid-template-columns:1fr;} }
+  .kat-big{border-radius:18px; overflow:hidden; position:relative; min-height:220px; display:flex; align-items:flex-end; padding:22px 24px;}
+  .kat-big .ov{background:linear-gradient(to top, rgba(15,25,15,0.72), rgba(15,25,15,0.05)); position:absolute; inset:0;}
+  .kat-big .txt{position:relative; z-index:2; color:#fff;}
+  .kat-big h4{font-family:'Sora',sans-serif; margin:0 0 4px; font-size:1.2rem;}
+  .kat-big p{margin:0; font-size:0.85rem; color:#EAF3E0;}
+  .kat-side{display:flex; flex-direction:column; gap:14px;}
+  .kat-mini{background:var(--grey-bg); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:6px; cursor:pointer;}
+  .kat-mini strong{font-family:'Sora',sans-serif; font-size:0.95rem; color:var(--navy);}
+  .kat-mini span{font-size:0.8rem; color:var(--ink-soft);}
+  .kat-wide{background:var(--grey-bg); border-radius:14px; padding:16px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .kat-wide strong{font-family:'Sora',sans-serif; font-size:0.95rem; color:var(--navy); display:block;}
+  .kat-wide span{font-size:0.8rem; color:var(--ink-soft);}
+  .kat-wide .arrow{font-size:1.2rem; color:var(--teal-deep);}
+
+  .subhead-row{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; gap:12px; flex-wrap:wrap;}
+  .subhead-row h3{font-family:'Sora',sans-serif; font-size:1.25rem; color:var(--navy); margin:0 0 4px;}
+  .subhead-row p{font-size:0.87rem; color:var(--ink-soft); margin:0;}
+  .subhead-row .lihat{font-weight:700; font-size:0.85rem; color:var(--teal-deep); cursor:pointer;}
+
+  .video-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:60px;}
+  @media (max-width:960px){ .video-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .video-grid{grid-template-columns:1fr;} }
+  .video-thumb{border-radius:12px; overflow:hidden; cursor:pointer;}
+  .video-thumb .box{background:var(--grey-bg); height:110px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--teal-deep);}
+  .video-thumb .cap{font-size:0.78rem; color:var(--ink-soft); padding:8px 2px; line-height:1.4;}
+
+  .ebook-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media (max-width:960px){ .ebook-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .ebook-grid{grid-template-columns:1fr;} }
+  .ebook-card{background:var(--grey-bg); border-radius:16px; padding:14px; text-align:center;}
+  .ebook-card .cover{border-radius:12px; overflow:hidden; height:150px; margin-bottom:12px;}
+  .ebook-card strong{display:block; font-family:'Sora',sans-serif; font-size:0.88rem; color:var(--navy); margin-bottom:10px;}
+  .ebook-card a{display:inline-block; width:100%; background:var(--navy-3); color:#fff; font-weight:700; font-size:0.8rem; padding:9px 0; border-radius:8px;}
+
+  /* ---------- KBBI page ---------- */
+  .kbbi-hero{background:var(--navy-2); border-radius:0 0 28px 28px; padding:70px 24px 60px; text-align:center; color:#fff;}
+  .kbbi-hero .inner{max-width:760px; margin:0 auto;}
+  .kbbi-hero h1{font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.7rem,3.2vw,2.3rem); margin:0 0 14px;}
+  .kbbi-hero p{font-size:0.96rem; color:#C9D8EA; line-height:1.65; margin:0 0 30px;}
+  .kbbi-box{display:flex; gap:10px; background:#fff; border-radius:14px; padding:8px; max-width:560px; margin:0 auto;}
+  .kbbi-box input{flex:1; border:none; padding:12px 14px; font-size:0.96rem; font-family:'Inter',sans-serif; outline:none; border-radius:10px;}
+  .kbbi-box button{border:none; background:var(--teal); color:#fff; font-weight:700; padding:0 22px; border-radius:10px; cursor:pointer;}
+  .kbbi-result{max-width:600px; margin:22px auto 0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); border-radius:12px; padding:18px 20px; text-align:left; display:none;}
+  .kbbi-result.show{display:block;}
+  .kbbi-result p{color:#DCE6F2; font-size:0.9rem; line-height:1.6; margin:0;}
+  .kbbi-result a{color:var(--mint); font-weight:700;}
+  .kbbi-below{max-width:900px; margin:0 auto; padding:60px 24px; text-align:center;}
+  .kbbi-below h2{font-family:'Sora',sans-serif; color:var(--navy); font-size:1.4rem; margin:0 0 14px;}
+  .kbbi-below p{color:var(--ink-soft); font-size:0.95rem; line-height:1.7; max-width:60ch; margin:0 auto 20px;}
+
+  /* ---------- Jurnal page ---------- */
+  .jurnal-hero{background:var(--navy-2); border-radius:0 0 28px 28px; padding:64px 24px 56px; text-align:center; color:#fff;}
+  .jurnal-hero h1{font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.7rem,3.2vw,2.3rem); margin:0 0 12px;}
+  .jurnal-hero p{font-size:0.95rem; color:#C9D8EA; max-width:60ch; margin:0 auto 30px; line-height:1.6;}
+  .stat-row{display:flex; justify-content:center; gap:48px; flex-wrap:wrap; margin-top:6px;}
+  .stat-row .stat strong{display:block; font-family:'Sora',sans-serif; font-size:1.7rem; color:var(--mint);}
+  .stat-row .stat span{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.06em; color:#9DB0C8; text-transform:uppercase;}
+
+  .journal-layout{max-width:1220px; margin:0 auto; padding:56px 24px; display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start;}
+  @media (max-width:900px){ .journal-layout{grid-template-columns:1fr;} }
+  .form-card{background:var(--grey-bg); border-radius:var(--radius); padding:26px;}
+  .form-card label{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-soft); font-weight:600; display:block; margin:0 0 7px;}
+  .form-card input[type=text], .form-card textarea{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 13px; font-family:'Inter',sans-serif; font-size:0.94rem; margin-bottom:16px; background:#fff; color:var(--ink); resize:vertical;}
+  .form-card textarea{min-height:170px; line-height:1.6;}
+  .form-card input:focus, .form-card textarea:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal);}
+  .wordcount{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; color:var(--ink-soft); margin:-8px 0 16px;}
+  .btn-navy{width:100%; background:var(--navy); color:#fff; border:none; font-weight:700; padding:13px 0; border-radius:10px; cursor:pointer; font-size:0.94rem;}
+  .list-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:22px;}
+  .list-card h4{font-family:'Sora',sans-serif; margin:0 0 4px; font-size:1.1rem; color:var(--navy);}
+  .list-card .sub{font-size:0.84rem; color:var(--ink-soft); margin:0 0 16px;}
+  .jitem{border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+  .jitem .jtitle{font-weight:700; font-size:0.94rem; margin-bottom:3px; color:var(--navy);}
+  .jitem .jmeta{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--ink-soft); display:flex; justify-content:space-between;}
+  .jitem .jactions{display:flex; gap:12px; margin-top:10px;}
+  .jitem .jactions button{font-size:0.76rem; font-weight:700; border:none; background:none; cursor:pointer; padding:0;}
+  .jitem .jactions .del{color:var(--coral);}
+  .jitem .jactions .use{color:var(--teal-deep);}
+  .empty-note{font-size:0.86rem; color:var(--ink-soft); font-style:italic; padding:12px 0;}
+
+  /* ---------- AI Chatbot page ---------- */
+  .chat-wrap{max-width:1220px; margin:0 auto; padding:34px 24px 60px;}
+  .chat-shell{background:var(--grey-bg); border-radius:22px; overflow:hidden; display:grid; grid-template-columns:270px 1fr; min-height:620px; border:1px solid var(--line);}
+  @media (max-width:880px){ .chat-shell{grid-template-columns:1fr;} }
+  .chat-side{background:#fff; padding:22px 18px; border-right:1px solid var(--line); display:flex; flex-direction:column;}
+  @media (max-width:880px){ .chat-side{border-right:none; border-bottom:1px solid var(--line);} }
+  .assist-id{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .assist-id .av{width:38px; height:38px; border-radius:10px; background:var(--teal); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.1rem;}
+  .assist-id strong{display:block; font-family:'Sora',sans-serif; font-size:0.95rem; color:var(--navy);}
+  .assist-id .onl{font-size:0.72rem; color:var(--green); font-weight:600;}
+  .new-conv{background:var(--teal-light); color:var(--teal-deep); border:none; font-weight:700; font-size:0.85rem; padding:11px 0; border-radius:10px; cursor:pointer; margin-bottom:16px;}
+  .conv-list{flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px;}
+  .conv-item{padding:10px 12px; border-radius:9px; cursor:pointer; font-size:0.85rem;}
+  .conv-item:hover{background:var(--grey-bg);}
+  .conv-item.active{background:var(--teal-light);}
+  .conv-item .ct{font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .conv-item .cd{font-size:0.7rem; color:var(--ink-soft);}
+  .mode-box{border-top:1px solid var(--line); padding-top:14px; margin-top:14px; display:flex; flex-direction:column; gap:8px;}
+  .mode-box label{font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-weight:600;}
+  .mode-box select{border:1px solid var(--line); border-radius:8px; padding:8px 9px; font-size:0.82rem; font-family:'Inter',sans-serif; background:#fff;}
+
+  .chat-main{display:flex; flex-direction:column; min-height:620px;}
+  .chat-scroll{flex:1; overflow-y:auto; padding:30px 30px 10px;}
+  .welcome{text-align:center; max-width:620px; margin:16px auto;}
+  .welcome .spark{width:52px; height:52px; border-radius:14px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 16px;}
+  .welcome h2{font-family:'Sora',sans-serif; color:var(--navy); font-size:1.5rem; margin:0 0 12px;}
+  .welcome p{color:var(--ink-soft); font-size:0.94rem; line-height:1.65; margin:0 0 24px;}
+  .feat-cards{display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:left;}
+  @media (max-width:560px){ .feat-cards{grid-template-columns:1fr;} }
+  .feat-cards .fc{background:var(--teal-light); border-radius:12px; padding:16px 18px;}
+  .feat-cards .fc strong{display:block; font-family:'Sora',sans-serif; font-size:0.92rem; color:var(--navy); margin-bottom:5px;}
+  .feat-cards .fc span{font-size:0.8rem; color:var(--ink-soft); line-height:1.5;}
+
+  .bubble-row{display:flex; margin-bottom:16px;}
+  .bubble-row.user{justify-content:flex-end;}
+  .bubble{max-width:72%; padding:13px 16px; border-radius:14px; font-size:0.92rem; line-height:1.65;}
+  .bubble-row.user .bubble{background:var(--navy); color:#fff; border-bottom-right-radius:4px;}
+  .bubble-row.ai .bubble{background:#fff; border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px;}
+  .bubble .orig{color:var(--coral); text-decoration:line-through;}
+  .bubble .fix{color:var(--teal-deep); font-weight:600;}
+
+  .chat-input-row{border-top:1px solid var(--line); padding:16px 22px; background:#fff;}
+  .chat-input-inner{display:flex; align-items:flex-end; gap:10px; background:var(--grey-bg); border-radius:14px; padding:8px 8px 8px 16px;}
+  .chat-input-inner textarea{flex:1; border:none; background:none; resize:none; font-family:'Inter',sans-serif; font-size:0.92rem; padding:8px 0; max-height:120px; outline:none; color:var(--ink);}
+  .send-btn{width:38px; height:38px; border-radius:10px; background:var(--teal); color:#fff; border:none; cursor:pointer; font-size:1rem; flex:0 0 auto;}
+  .send-btn:disabled{opacity:0.5; cursor:progress;}
+  .chat-status{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; color:var(--ink-soft); padding:8px 22px 0;}
+
+  /* ---------- Auth modal ---------- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(11,20,40,0.55); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-card{background:#fff; border-radius:20px; max-width:400px; width:100%; padding:32px 28px; text-align:center; position:relative;}
+  .modal-card .mclose{position:absolute; top:14px; right:16px; border:none; background:none; font-size:1.2rem; cursor:pointer; color:var(--ink-soft);}
+  .modal-card .micon{width:50px; height:50px; border-radius:14px; background:var(--teal-light); color:var(--teal-deep); display:flex; align-items:center; justify-content:center; font-size:1.3rem; margin:0 auto 16px;}
+  .modal-card h3{font-family:'Sora',sans-serif; color:var(--navy); margin:0 0 10px; font-size:1.2rem;}
+  .modal-card p{color:var(--ink-soft); font-size:0.9rem; line-height:1.6; margin:0 0 22px;}
+  .modal-card button.ok{width:100%; background:var(--navy); color:#fff; border:none; font-weight:700; padding:12px 0; border-radius:10px; cursor:pointer;}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--navy); color:#B6C1D6; padding:44px 24px 28px; margin-top:20px;}
+  .foot-inner{max-width:1220px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+  .foot-inner .flogo{font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.15rem; margin-bottom:8px;}
+  .foot-inner p{font-size:0.85rem; line-height:1.6; max-width:42ch; margin:0;}
+  .foot-links{display:flex; gap:60px; flex-wrap:wrap;}
+  .foot-links div strong{display:block; font-family:'Sora',sans-serif; color:#fff; font-size:0.9rem; margin-bottom:10px;}
+  .foot-links div a{display:block; font-size:0.85rem; color:#B6C1D6; margin-bottom:8px;}
+  .foot-meta{max-width:1220px; margin:30px auto 0; font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:#7787A2; border-top:1px solid rgba(255,255,255,0.12); padding-top:18px;}
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<!-- ================= SVG DEFS (illustration reused) ================= -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <g id="hills-scene">
+      <circle cx="18%" cy="26%" r="9%" fill="#FFFFFF" opacity="0.9"/>
+      <circle cx="26%" cy="22%" r="7%" fill="#FFFFFF" opacity="0.85"/>
+      <circle cx="72%" cy="18%" r="8%" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="80%" cy="24%" r="6%" fill="#FFFFFF" opacity="0.75"/>
+      <path d="M0,70 Q20,55 40,68 T100,60 L100,100 L0,100 Z" fill="#B9CE5B"/>
+      <path d="M0,82 Q25,68 50,80 T100,74 L100,100 L0,100 Z" fill="#7A9A1E"/>
+    </g>
+  </defs>
+</svg>
+
+<header>
+  <div class="headbar">
+    <div class="logo">DIGIBAHAS</div>
+    <nav class="tabs" id="navTabs">
+      <button data-page="beranda" class="active">Beranda</button>
+      <button data-page="belajar">E-Learning</button>
+      <button data-page="jurnal">Jurnal Saya</button>
+      <button data-page="kbbi">Akses KBBI</button>
+      <button data-page="chatbot">AI Chatbot</button>
+    </nav>
+    <button class="cta-mini" id="authButton" onclick="openAuth()">Masuk/Daftar</button>
+  </div>
+  <div class="mobile-tabs" id="navTabsMobile">
+    <button data-page="beranda" class="active">Beranda</button>
+    <button data-page="belajar">E-Learning</button>
+    <button data-page="jurnal">Jurnal Saya</button>
+    <button data-page="kbbi">Akses KBBI</button>
+    <button data-page="chatbot">AI Chatbot</button>
+  </div>
+</header>
+
+<!-- ============ PAGE: BERANDA ============ -->
+<div class="page active" id="page-beranda">
+  <div class="beranda-top">
+    <h1>Ekosistem Belajar Terpadu</h1>
+    <p>Kami mengintegrasikan teknologi digital untuk memastikan pengalaman belajar bahasa Indonesia yang komprehensif, mudah diakses, dan relevan dengan tren digital masa kini.</p>
+  </div>
+
+  <div class="hero-cards">
+    <div class="card-elearn illus" onclick="goPage('belajar')" style="cursor:pointer;">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; inset:0; width:100%; height:100%;"><use href="#hills-scene"/></svg>
+      <div style="position:relative; z-index:2;">
+        <span class="cap-icon">🎓</span>
+        <h3>E-Learning Interaktif</h3>
+        <p>Akses video pembelajaran dan e-book eksklusif untuk mempertajam kemampuan berbahasamu.</p>
+      </div>
+    </div>
+    <div class="card-kbbi">
+      <div class="qicon">🔍</div>
+      <h3>Akses KBBI Digital</h3>
+      <p>Cari definisi dan ejaan baku kata bahasa Indonesia secara resmi dan akurat.</p>
+      <div class="kbbi-search">
+        <input type="text" id="homeKbbiInput" placeholder="cari kata..." onkeydown="if(event.key==='Enter')goKbbiFromHome()">
+        <button onclick="goKbbiFromHome()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" style="padding-top:10px;">
+    <p class="kicker">Tiga Pilar</p>
+    <h2 class="sec-title">Bagaimana DIGIBAHAS Bekerja</h2>
+    <p class="sec-lede">Alurnya sederhana: pelajari kaidah bahasa yang benar, praktikkan lewat tulisan sendiri, lalu dapatkan koreksi langsung dari AI.</p>
+    <div class="pillars">
+      <div class="pillar" onclick="goPage('belajar')">
+        <span class="num">01</span> <span class="badge">★ Polling #2</span>
+        <h3>Belajar Bahasa</h3>
+        <p>E-book dan video pembelajaran kebahasaan, lengkap dengan akses ke artikel dan jurnal rujukan.</p>
+        <div class="go">Buka E-Learning →</div>
+      </div>
+      <div class="pillar" onclick="goPage('jurnal')">
+        <span class="num">02</span> <span class="badge" style="background:#DCEFE0;">Praktik</span>
+        <h3>Unggah Jurnal</h3>
+        <p>Latih apa yang sudah dipelajari dengan menulis dan menyimpan jurnal atau tulisan pendek sendiri.</p>
+        <div class="go">Tulis jurnal →</div>
+      </div>
+      <div class="pillar" onclick="goPage('chatbot')">
+        <span class="num">03</span> <span class="badge">★ Polling #1</span>
+        <h3>AI Chatbot</h3>
+        <p>Deteksi orisinalitas dasar dan dapatkan solusi kebahasaan secara real time dari AI.</p>
+        <div class="go">Cek tulisanku →</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block lined" style="padding-top:10px;">
+    <p class="kicker">Latar Belakang</p>
+    <h2 class="sec-title">Kenapa Bahasa Kita Perlu Dijaga?</h2>
+    <div class="about-grid">
+      <div>
+        <p>Media sosial mempercepat cara kita berkomunikasi, tetapi kecepatan itu sering datang dengan harga: singkatan berlebihan, campur kode yang tidak terarah, dan kaidah ejaan yang makin diabaikan — terutama di kalangan remaja.</p>
+        <p>DIGIBAHAS hadir sebagai benteng preventif: menyediakan ruang edukasi dan koreksi yang mudah diakses, seringan membuka aplikasi yang sudah akrab dengan keseharian mereka.</p>
+      </div>
+      <div class="acronym-box">
+        <div class="word"><span class="letter">DIGI</span><span class="text">Digitalisasi — edukasi bahasa yang hadir lewat aplikasi dan website.</span></div>
+        <div class="word"><span class="letter">BAHAS</span><span class="text">Gerakan Bijak Berbahasa — mengajak remaja sadar dan cermat berbahasa.</span></div>
+        <div class="word"><span class="letter">＋</span><span class="text">Model Edukasi Preventif terhadap Degradasi Bahasa di Media Sosial.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0;">
+    <div class="cta-banner">
+      <div>
+        <h2>Siap Menjadi Bagian dari<br>Revolusi Bahasa Digital?</h2>
+        <p>Mulai belajar, berlatih menulis, dan konsultasikan tulisanmu ke AI — semua dalam satu tempat.</p>
+      </div>
+      <div class="btns">
+        <button class="btn-light" onclick="goPage('belajar')">Mulai Belajar</button>
+        <button class="btn-outline-light" onclick="goPage('chatbot')">Coba AI Chatbot</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGE: E-LEARNING ============ -->
+<div class="page" id="page-belajar">
+  <div class="elearn-hero">
+    <div>
+      <h1>Kuasai Linguistik Digital di Genggaman Anda.</h1>
+      <p>Akses modul pembelajaran, video tutorial interaktif, dan perpustakaan e-book untuk memperkuat kemampuan berbahasa Indonesia di era digital.</p>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="resSearch" placeholder="Cari materi, video, atau e-book...">
+      </div>
+    </div>
+    <div class="illus elearn-illus">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%; height:100%;"><use href="#hills-scene"/></svg>
+    </div>
+  </div>
+
+  <section class="block">
+    <h3 class="disp" style="font-size:1.2rem; color:var(--navy); margin:0 0 18px;">Kategori Pembelajaran</h3>
+    <div class="kategori-row">
+      <div class="kat-big" style="background:linear-gradient(135deg,#3E5C3A,#7A9A1E);">
+        <div class="ov"></div>
+        <div class="txt"><h4>Tata Bahasa</h4><p>Pelajari struktur kalimat formal vs informal di era digital</p></div>
+      </div>
+      <div class="kat-side">
+        <div class="kat-mini" onclick="goPage('kbbi')"><strong>📘 Akses KBBI</strong><span>Cari makna & ejaan baku kata</span></div>
+        <div class="kat-mini"><strong>🗂 Kosa Kata Baru</strong><span>Istilah-istilah bahasa terkini</span></div>
+        <div class="kat-wide"><div><strong>Analisis Wacana</strong><span>Memahami makna tersirat dalam teks digital</span></div><span class="arrow">→</span></div>
+      </div>
+    </div>
+
+    <div class="subhead-row">
+      <div><h3>Video Tutorial Terpopuler</h3><p>Tingkatkan pemahaman visual dengan instruktur ahli.</p></div>
+      <span class="lihat">Lihat Semua &gt;</span>
+    </div>
+    <div class="video-grid" id="videoGrid"></div>
+
+    <div class="subhead-row">
+      <div><h3>E-book &amp; Panduan Digital</h3><p>Unduh dan pelajari kapan saja.</p></div>
+    </div>
+    <div class="ebook-grid" id="ebookGrid"></div>
+  </section>
+</div>
+
+<!-- ============ PAGE: AKSES KBBI ============ -->
+<div class="page" id="page-kbbi">
+  <div class="kbbi-hero">
+    <div class="inner">
+      <h1>Akses KBBI Digital</h1>
+      <p>Cari definisi dan ejaan baku kata bahasa Indonesia. DIGIBAHAS mengarahkanmu langsung ke KBBI Daring resmi milik Badan Pengembangan dan Pembinaan Bahasa, Kemendikbudristek.</p>
+      <div class="kbbi-box">
+        <input type="text" id="kbbiInput" placeholder="Ketik kata yang ingin dicari..." onkeydown="if(event.key==='Enter')searchKbbi()">
+        <button onclick="searchKbbi()">Cari</button>
+      </div>
+      <div class="kbbi-result" id="kbbiResult"></div>
+    </div>
+  </div>
+  <div class="kbbi-below">
+    <h2>Kenapa Merujuk ke KBBI Resmi?</h2>
+    <p>Agar makna dan ejaan yang kamu pelajari selalu akurat dan mengikuti pemutakhiran resmi dari Badan Bahasa. DIGIBAHAS tidak menampilkan ulang isi kamus, melainkan membantumu langsung menuju sumber aslinya.</p>
+    <a href="https://kbbi.kemdikbud.go.id" target="_blank" rel="noopener" class="btn-navy" style="display:inline-block; width:auto; padding:13px 26px; text-decoration:none;">Buka KBBI Daring →</a>
+  </div>
+</div>
+
+<!-- ============ PAGE: JURNAL ============ -->
+<div class="page" id="page-jurnal">
+  <div class="jurnal-hero">
+    <h1>Jurnal Saya</h1>
+    <p>Ruang praktik menulis pribadimu. Tuliskan hasil praktik kebahasaanmu, simpan, lalu kirim ke AI Chatbot untuk diperiksa.</p>
+    <div class="stat-row">
+      <div class="stat"><strong id="statCount">0</strong><span>Jurnal Tersimpan</span></div>
+      <div class="stat"><strong id="statWords">0</strong><span>Total Kata Ditulis</span></div>
+    </div>
+  </div>
+  <div class="journal-layout">
+    <div class="form-card">
+      <label for="jTitle">Judul Jurnal</label>
+      <input type="text" id="jTitle" placeholder="Contoh: Refleksi Belajar Minggu Ini">
+      <label for="jBody">Isi Tulisan</label>
+      <textarea id="jBody" placeholder="Tulis praktik kebahasaanmu di sini..."></textarea>
+      <div class="wordcount" id="jCount">0 kata</div>
+      <button class="btn-navy" onclick="saveJournal()">Simpan Jurnal</button>
+    </div>
+    <div class="list-card">
+      <h4>Jurnal Tersimpan</h4>
+      <p class="sub">Hanya kamu yang bisa melihat daftar ini.</p>
+      <div id="journalList"><p class="empty-note">Memuat jurnal…</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: AI CHATBOT ============ -->
+<div class="page" id="page-chatbot">
+  <div class="chat-wrap">
+    <div class="chat-shell">
+      <div class="chat-side">
+        <div class="assist-id">
+          <div class="av">✨</div>
+          <div><strong>Asisten Lingua AI</strong><span class="onl">● Online</span></div>
+        </div>
+        <button class="new-conv" onclick="newConversation()">+ Percakapan Baru</button>
+        <div class="conv-list" id="convList"></div>
+        <div class="mode-box">
+          <label>Mode</label>
+          <select id="modeSelect">
+            <option value="akademik">Akademik</option>
+            <option value="santai">Santai</option>
+          </select>
+          <label>Konteks</label>
+          <select id="ctxSelect">
+            <option value="media sosial">Media Sosial</option>
+            <option value="formal">Formal / Akademik</option>
+          </select>
+        </div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-scroll" id="chatScroll">
+          <div class="welcome" id="welcomeBlock">
+            <div class="spark">✨</div>
+            <h2>Selamat Datang di Masa Depan Linguistik</h2>
+            <p>Saya Asisten Lingua AI, dirancang untuk membantumu berbahasa Indonesia yang baik dan benar di ruang digital. Saya bisa membantu:</p>
+            <div class="feat-cards">
+              <div class="fc"><strong>📋 Deteksi Orisinalitas</strong><span>Pengecekan kemiripan dasar dengan jurnal yang sudah kamu simpan.</span></div>
+              <div class="fc"><strong>✓ Solusi Kebahasaan</strong><span>Perbaikan PUEBI/EYD, rekomendasi kosakata formal, dan restrukturisasi kalimat.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-status" id="chatStatus"></div>
+        <div class="chat-input-row">
+          <div class="chat-input-inner">
+            <textarea id="chatInput" rows="1" placeholder="Tulis pesan Anda di sini..." onkeydown="handleChatKey(event)"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendChat()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="flogo">DIGIBAHAS</div>
+      <p>Melindungi kualitas berbahasa digital melalui edukasi yang memberdayakan dan inklusif.</p>
+    </div>
+    <div class="foot-links">
+      <div>
+        <strong>Layanan</strong>
+        <a onclick="goPage('belajar')">E-Learning</a>
+        <a onclick="goPage('kbbi')">Akses KBBI</a>
+        <a onclick="goPage('chatbot')">AI Chatbot</a>
+      </div>
+      <div>
+        <strong>Tentang</strong>
+        <a onclick="goPage('beranda')">Tentang DIGIBAHAS</a>
+        <a onclick="goPage('jurnal')">Jurnal Saya</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-meta">PROTOTIPE INOVASI · DIGITALISASI GERAKAN BIJAK BERBAHASA SEBAGAI MODEL EDUKASI PREVENTIF TERHADAP DEGRADASI BAHASA DI MEDIA SOSIAL</div>
+</footer>
+
+<!-- ============ AUTH MODAL ============ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-card" style="text-align:left;">
+    <button class="mclose" onclick="closeAuth()">✕</button>
+    <div class="micon" style="margin-left:auto;margin-right:auto;">🔐</div>
+    <h3 id="authTitle" style="text-align:center;">Masuk ke DIGIBAHAS</h3>
+    <p id="authSubtitle" style="text-align:center;">Simpan jurnal dan riwayat chatbot di akunmu.</p>
+
+    <div id="authRegisterFields" style="display:none;">
+      <label style="display:block;font-size:.78rem;font-weight:700;margin:0 0 6px;">Nama</label>
+      <input id="authName" type="text" autocomplete="name" placeholder="Nama kamu"
+        style="width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:12px;">
+    </div>
+    <label style="display:block;font-size:.78rem;font-weight:700;margin:0 0 6px;">Email</label>
+    <input id="authEmail" type="email" autocomplete="email" placeholder="nama@email.com"
+      style="width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:12px;">
+    <label style="display:block;font-size:.78rem;font-weight:700;margin:0 0 6px;">Kata sandi</label>
+    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Minimal 8 karakter"
+      style="width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:12px;">
+    <div id="authError" style="display:none;color:var(--coral);font-size:.8rem;margin-bottom:12px;"></div>
+    <button class="ok" id="authSubmit" onclick="submitAuth()">Masuk</button>
+    <button id="authSwitch" onclick="toggleAuthMode()"
+      style="width:100%;margin-top:10px;background:none;border:none;color:var(--teal-deep);font-weight:700;cursor:pointer;">
+      Belum punya akun? Daftar
+    </button>
+  </div>
+</div>
+
+<script>
+/* ================= DIGIBAHAS APP ================= */
+const API = '/api';
+let currentConvId = null;
+let currentMessages = [];
+let authMode = 'login';
+let currentUser = null;
+
+/* ---------- navigation ---------- */
+function goPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('#navTabs button, #navTabsMobile button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page===name);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(name==='jurnal') refreshJournalUI();
+  if(name==='chatbot') refreshConvList();
+}
+document.querySelectorAll('#navTabs button, #navTabsMobile button').forEach(b=>{
+  b.addEventListener('click', ()=>goPage(b.dataset.page));
+});
+
+/* ---------- auth ---------- */
+function openAuth(){
+  if(currentUser){ logout(); return; }
+  document.getElementById('authModal').classList.add('show');
+  setAuthMode('login');
+}
+function closeAuth(){ document.getElementById('authModal').classList.remove('show'); }
+function toggleAuthMode(){ setAuthMode(authMode==='login'?'register':'login'); }
+function setAuthMode(mode){
+  authMode=mode;
+  const reg=mode==='register';
+  document.getElementById('authTitle').textContent=reg?'Buat Akun DIGIBAHAS':'Masuk ke DIGIBAHAS';
+  document.getElementById('authSubtitle').textContent=reg?'Akun diperlukan untuk menyimpan data secara aman.':'Simpan jurnal dan riwayat chatbot di akunmu.';
+  document.getElementById('authRegisterFields').style.display=reg?'block':'none';
+  document.getElementById('authSubmit').textContent=reg?'Daftar':'Masuk';
+  document.getElementById('authSwitch').textContent=reg?'Sudah punya akun? Masuk':'Belum punya akun? Daftar';
+  document.getElementById('authPassword').autocomplete=reg?'new-password':'current-password';
+  document.getElementById('authError').style.display='none';
+}
+async function submitAuth(){
+  const error=document.getElementById('authError');
+  const body={
+    email:document.getElementById('authEmail').value.trim(),
+    password:document.getElementById('authPassword').value
+  };
+  if(authMode==='register') body.name=document.getElementById('authName').value.trim();
+  try{
+    const r=await fetch(API+'/auth/'+authMode,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Autentikasi gagal.');
+    currentUser=data.user;
+    closeAuth();
+    updateAuthButton();
+    refreshJournalUI();
+    refreshConvList();
+    alert(authMode==='register'?'Akun berhasil dibuat.':'Berhasil masuk.');
+  }catch(e){
+    error.textContent=e.message;
+    error.style.display='block';
+  }
+}
+async function logout(){
+  await fetch(API+'/auth/logout',{method:'POST'}).catch(()=>{});
+  currentUser=null; currentConvId=null; currentMessages=[];
+  updateAuthButton();
+  refreshJournalUI(); refreshConvList();
+}
+function updateAuthButton(){
+  const b=document.getElementById('authButton');
+  if(!b) return;
+  b.textContent=currentUser ? `Keluar (${currentUser.name})` : 'Masuk/Daftar';
+}
+async function loadMe(){
+  try{
+    const r=await fetch(API+'/auth/me');
+    if(r.ok){ const d=await r.json(); currentUser=d.user; }
+  }catch(e){}
+  updateAuthButton();
+}
+
+/* ---------- resources ---------- */
+const videos=[
+  {title:'Bahasa Gaul vs Bahasa Baku',icon:'▶'},
+  {title:'Etika Berbahasa di Media Sosial',icon:'▶'},
+  {title:'Yuk, Kenalan dengan Tanda Baca',icon:'▶'},
+  {title:'Menulis Caption yang Baik & Benar',icon:'▶'}
+];
+const ebooks=[
+  {title:'Panduan Ejaan Bahasa Indonesia (EYD V)',url:'https://badanbahasa.kemdikbud.go.id'},
+  {title:'Menulis Jurnal yang Baik',url:'#'},
+  {title:'Kamus Istilah Media Sosial',url:'#'},
+  {title:'Etika Berkomunikasi Digital',url:'#'}
+];
+function renderResources(){
+  const vg=document.getElementById('videoGrid'); vg.innerHTML='';
+  videos.forEach(v=>{
+    const d=document.createElement('div'); d.className='video-thumb';
+    d.innerHTML=`<div class="box">${v.icon}</div><div class="cap">${escapeHtml(v.title)}<br><span style="opacity:.7;">Contoh video, Sumber: YouTube</span></div>`;
+    vg.appendChild(d);
+  });
+  const eg=document.getElementById('ebookGrid'); eg.innerHTML='';
+  ebooks.forEach(e=>{
+    const d=document.createElement('div'); d.className='ebook-card';
+    d.innerHTML=`<div class="cover illus"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><use href="#hills-scene"/></svg></div><strong>${escapeHtml(e.title)}</strong><a href="${e.url}" target="_blank" rel="noopener">Buka</a>`;
+    eg.appendChild(d);
+  });
+}
+renderResources();
+
+/* ---------- KBBI ---------- */
+async function searchKbbi(){
+  const q=document.getElementById('kbbiInput').value.trim();
+  const box=document.getElementById('kbbiResult');
+  if(!q){box.classList.remove('show');return;}
+  box.classList.add('show');
+  box.innerHTML='<p>Mencari entri KBBI…</p>';
+  try{
+    const r=await fetch(API+'/kbbi/search?q='+encodeURIComponent(q));
+    const data=await r.json();
+    if(data.sourceUrl){
+      let html='<p><strong>'+escapeHtml(q)+'</strong></p>';
+      if(data.entries && data.entries.length){
+        html+='<div style="margin-top:10px;">';
+        data.entries.slice(0,8).forEach(e=>{
+          html+=`<div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.15)"><strong>${escapeHtml(e.lemma||e.word||'')}</strong><br><span>${escapeHtml(e.definition||e.arti||'')}</span></div>`;
+        });
+        html+='</div>';
+      }
+      html+=`<div style="margin-top:12px;"><a href="${data.sourceUrl}" target="_blank" rel="noopener">Buka sumber KBBI resmi →</a></div>`;
+      box.innerHTML=html;
+    }else{
+      box.innerHTML=`<p>Belum ada koneksi data kamus lokal/API. <a href="${data.officialUrl||'https://kbbi.kemdikbud.go.id'}" target="_blank" rel="noopener">Buka KBBI Daring resmi →</a></p>`;
+    }
+  }catch(e){
+    box.innerHTML='<p>KBBI sedang tidak dapat diakses. Silakan coba lagi atau buka <a href="https://kbbi.kemdikbud.go.id" target="_blank" rel="noopener">KBBI Daring resmi →</a></p>';
+  }
+}
+function goKbbiFromHome(){
+  const val=document.getElementById('homeKbbiInput').value.trim();
+  goPage('kbbi');
+  setTimeout(()=>{document.getElementById('kbbiInput').value=val;if(val)searchKbbi();},150);
+}
+
+/* ---------- journals ---------- */
+const jBody=document.getElementById('jBody');
+jBody.addEventListener('input',()=>{
+  const words=jBody.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('jCount').textContent=words+' kata';
+});
+async function saveJournal(){
+  if(!currentUser){openAuth();return;}
+  const title=document.getElementById('jTitle').value.trim();
+  const body=jBody.value.trim();
+  if(!title||!body){alert('Isi judul dan tulisan jurnal terlebih dahulu.');return;}
+  try{
+    const r=await fetch(API+'/journals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,body})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error);
+    document.getElementById('jTitle').value=''; jBody.value=''; document.getElementById('jCount').textContent='0 kata';
+    refreshJournalUI();
+  }catch(e){alert(e.message||'Gagal menyimpan jurnal.');}
+}
+async function getAllJournals(){
+  if(!currentUser) return [];
+  try{const r=await fetch(API+'/journals');if(!r.ok)return [];return (await r.json()).journals||[];}catch(e){return [];}
+}
+async function refreshJournalUI(){
+  const listEl=document.getElementById('journalList');
+  if(!currentUser){
+    document.getElementById('statCount').textContent='—'; document.getElementById('statWords').textContent='—';
+    listEl.innerHTML='<p class="empty-note">Masuk untuk menyimpan dan melihat jurnal pribadi.</p>'; return;
+  }
+  listEl.innerHTML='<p class="empty-note">Memuat jurnal…</p>';
+  const entries=await getAllJournals();
+  let totalWords=0; entries.forEach(en=>totalWords+=en.body.trim().split(/\s+/).filter(Boolean).length);
+  document.getElementById('statCount').textContent=entries.length;
+  document.getElementById('statWords').textContent=totalWords;
+  if(!entries.length){listEl.innerHTML='<p class="empty-note">Belum ada jurnal tersimpan.</p>';return;}
+  listEl.innerHTML='';
+  entries.forEach(en=>{
+    const words=en.body.trim().split(/\s+/).filter(Boolean).length;
+    const div=document.createElement('div');div.className='jitem';
+    div.innerHTML=`<div class="jtitle">${escapeHtml(en.title)}</div>
+      <div class="jmeta"><span>${escapeHtml(en.date)}</span><span>${words} kata</span></div>
+      <div class="jactions"><button class="use">Kirim ke AI Chatbot →</button><button class="del">Hapus</button></div>`;
+    div.querySelector('.use').onclick=()=>useInChatbot(en.id);
+    div.querySelector('.del').onclick=()=>deleteJournal(en.id);
+    listEl.appendChild(div);
+  });
+}
+async function deleteJournal(id){
+  if(!confirm('Hapus jurnal ini?'))return;
+  await fetch(API+'/journals/'+encodeURIComponent(id),{method:'DELETE'});
+  refreshJournalUI();
+}
+async function useInChatbot(id){
+  const entries=await getAllJournals(); const en=entries.find(e=>e.id===id); if(!en)return;
+  goPage('chatbot'); setTimeout(()=>{newConversation();document.getElementById('chatInput').value='Tolong periksa jurnal saya berjudul "'+en.title+'":\n\n'+en.body;},150);
+}
+
+/* ---------- chatbot ---------- */
+function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+async function refreshConvList(){
+  const list=document.getElementById('convList');
+  if(!currentUser){list.innerHTML='<p class="empty-note" style="font-size:.78rem;">Masuk untuk menyimpan percakapan.</p>';return;}
+  try{
+    const r=await fetch(API+'/conversations'); const data=await r.json(); const convs=data.conversations||[];
+    list.innerHTML='';
+    if(!convs.length){list.innerHTML='<p class="empty-note" style="font-size:.78rem;">Belum ada percakapan.</p>';return;}
+    convs.forEach(c=>{
+      const d=document.createElement('div');d.className='conv-item'+(c.id===currentConvId?' active':'');
+      d.innerHTML=`<div class="ct">${escapeHtml(c.title)}</div><div class="cd">${new Date(c.updated).toLocaleDateString('id-ID',{day:'numeric',month:'short'})}</div>`;
+      d.onclick=()=>loadConversation(c.id);list.appendChild(d);
+    });
+  }catch(e){list.innerHTML='<p class="empty-note">Gagal memuat percakapan.</p>';}
+}
+function newConversation(){
+  currentConvId=null; currentMessages=[];
+  document.getElementById('chatScroll').innerHTML=document.getElementById('welcomeBlock').outerHTML;
+  refreshConvList();
+}
+async function loadConversation(id){
+  if(!currentUser)return;
+  try{
+    const r=await fetch(API+'/conversations/'+encodeURIComponent(id)); if(!r.ok)return;
+    const d=await r.json(); currentConvId=d.conversation.id; currentMessages=d.conversation.messages; renderMessages(); refreshConvList();
+  }catch(e){console.error(e);}
+}
+function renderMessages(){
+  const scroll=document.getElementById('chatScroll');scroll.innerHTML='';
+  currentMessages.forEach(m=>{
+    const row=document.createElement('div');row.className='bubble-row '+(m.role==='user'?'user':'ai');
+    const bubble=document.createElement('div');bubble.className='bubble';bubble.innerHTML=formatMessage(m.text);
+    row.appendChild(bubble);scroll.appendChild(row);
+  });
+  scroll.scrollTop=scroll.scrollHeight;
+}
+function formatMessage(text){
+  let safe=escapeHtml(text);
+  safe=safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  return safe;
+}
+async function checkOriginality(text){
+  const entries=await getAllJournals();let maxSim=0,matchTitle='';
+  const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').split(/\s+/).filter(w=>w.length>3);
+  entries.forEach(en=>{
+    const a=new Set(norm(text)),b=new Set(norm(en.body));if(!a.size||!b.size)return;
+    let overlap=0;a.forEach(w=>{if(b.has(w))overlap++;});
+    const sim=overlap/Math.min(a.size,b.size);if(sim>maxSim){maxSim=sim;matchTitle=en.title;}
+  });
+  return {maxSim,matchTitle};
+}
+async function sendChat(){
+  if(!currentUser){openAuth();return;}
+  const input=document.getElementById('chatInput'),text=input.value.trim();if(!text)return;
+  const btn=document.getElementById('sendBtn'),status=document.getElementById('chatStatus');
+  currentMessages.push({role:'user',text});renderMessages();input.value='';btn.disabled=true;
+  status.textContent='Memeriksa orisinalitas dasar…';
+  const orig=await checkOriginality(text);status.textContent='Asisten Lingua AI sedang mengetik…';
+  const mode=document.getElementById('modeSelect').value,ctx=document.getElementById('ctxSelect').value;
+  const origNote=orig.maxSim>=.55?`Teks terdeteksi ${Math.round(orig.maxSim*100)}% mirip dengan jurnal "${orig.matchTitle}". Sebutkan singkat.`:'Tidak ditemukan kemiripan berarti dengan jurnal tersimpan.';
+  const systemPrompt=`Kamu adalah "Asisten Lingua AI", chatbot kebahasaan DIGIBAHAS untuk remaja Indonesia.
+Tugas: koreksi EYD/PUEBI dan tata bahasa jika pengguna memberi teks; jika bertanya tentang bahasa Indonesia, jawab langsung.
+Mode: ${mode}. Konteks: ${ctx}. Catatan orisinalitas: ${origNote}
+Jawab dalam Bahasa Indonesia, ringkas, terstruktur, ramah. Gunakan **teks tebal** untuk bagian penting.`;
+  try{
+    const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:currentMessages,systemPrompt,mode,ctx,conversationId:currentConvId})});
+    const data=await r.json();if(!r.ok)throw new Error(data.error||'AI gagal memproses.');
+    currentMessages.push({role:'assistant',text:data.text});currentConvId=data.conversationId;
+    renderMessages();status.textContent='';refreshConvList();
+  }catch(e){console.error(e);status.textContent=e.message||'Terjadi kendala saat menghubungi AI.';}
+  finally{btn.disabled=false;}
+}
+function escapeHtml(str){
+  const d=document.createElement('div');d.textContent=str??'';return d.innerHTML;
+}
+
+/* ---------- init ---------- */
+loadMe();
+</script>
+</body>
+</html>
