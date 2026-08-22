@@ -289,6 +289,6 @@ function normalizeKbbi(raw,q){
 
 app.get(/.*/,(req,res)=>{
   if(req.path.startsWith("/api/"))return res.status(404).json({error:"Endpoint tidak ditemukan."});
-  res.sendFile(path.join(__dirname,"public","digibahas.html"));
+  res.sendFile(path.join(__dirname,"public","index.html"));
 });
 app.listen(PORT,()=>console.log(`DIGIBAHAS berjalan di http://localhost:${PORT}`));
