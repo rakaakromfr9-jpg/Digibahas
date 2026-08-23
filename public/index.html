@@ -146,9 +146,12 @@
   .video-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:60px;}
   @media (max-width:960px){ .video-grid{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:560px){ .video-grid{grid-template-columns:1fr;} }
-  .video-thumb{border-radius:12px; overflow:hidden; cursor:pointer;}
-  .video-thumb .box{background:var(--grey-bg); height:110px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--teal-deep);}
+  .video-thumb{border-radius:12px; overflow:hidden;}
+  .video-thumb a{display:block;}
+  .video-thumb .box{background:var(--grey-bg) center/cover no-repeat; height:110px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--teal-deep); position:relative;}
+  .video-thumb .box .playbtn{width:34px; height:34px; border-radius:50%; background:rgba(11,20,40,0.72); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.85rem;}
   .video-thumb .cap{font-size:0.78rem; color:var(--ink-soft); padding:8px 2px; line-height:1.4;}
+  .video-thumb .cap .src{opacity:.7; font-size:0.72rem;}
 
   .ebook-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
   @media (max-width:960px){ .ebook-grid{grid-template-columns:repeat(2,1fr);} }
@@ -197,10 +200,13 @@
   .jitem{border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
   .jitem .jtitle{font-weight:700; font-size:0.94rem; margin-bottom:3px; color:var(--navy);}
   .jitem .jmeta{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--ink-soft); display:flex; justify-content:space-between;}
-  .jitem .jactions{display:flex; gap:12px; margin-top:10px;}
-  .jitem .jactions button{font-size:0.76rem; font-weight:700; border:none; background:none; cursor:pointer; padding:0;}
+  .jitem .jactions{display:flex; gap:12px; margin-top:10px; flex-wrap:wrap; align-items:center;}
+  .jitem .jactions button, .jitem .jactions a{font-size:0.76rem; font-weight:700; border:none; background:none; cursor:pointer; padding:0;}
   .jitem .jactions .del{color:var(--coral);}
   .jitem .jactions .use{color:var(--teal-deep);}
+  .jitem .jactions .scholar{color:var(--navy-3);}
+  .jitem .jactions .rgate{color:#0FA05A;}
+  .jitem .refnote{font-size:0.72rem; color:var(--ink-soft); margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
   .empty-note{font-size:0.86rem; color:var(--ink-soft); font-style:italic; padding:12px 0;}
 
   /* ---------- AI Chatbot page ---------- */
@@ -223,6 +229,15 @@
   .mode-box{border-top:1px solid var(--line); padding-top:14px; margin-top:14px; display:flex; flex-direction:column; gap:8px;}
   .mode-box label{font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-weight:600;}
   .mode-box select{border:1px solid var(--line); border-radius:8px; padding:8px 9px; font-size:0.82rem; font-family:'Inter',sans-serif; background:#fff;}
+
+  .apikey-box{border-top:1px solid var(--line); padding-top:14px; margin-top:14px; display:flex; flex-direction:column; gap:8px;}
+  .apikey-box label{font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-weight:600;}
+  .apikey-row{display:flex; gap:6px;}
+  .apikey-row input{flex:1; min-width:0; border:1px solid var(--line); border-radius:8px; padding:8px 9px; font-size:0.8rem; font-family:'IBM Plex Mono',monospace; background:#fff; color:var(--ink);}
+  .apikey-row input:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal);}
+  .apikey-toggle{border:1px solid var(--line); background:#fff; border-radius:8px; width:34px; flex:0 0 auto; cursor:pointer; font-size:0.85rem;}
+  .apikey-hint{font-size:0.7rem; color:var(--ink-soft); line-height:1.5;}
+  .apikey-hint.warn{color:var(--coral);}
 
   .chat-main{display:flex; flex-direction:column; min-height:620px;}
   .chat-scroll{flex:1; overflow-y:auto; padding:30px 30px 10px;}
@@ -478,7 +493,7 @@
     </div>
     <div class="list-card">
       <h4>Jurnal Tersimpan</h4>
-      <p class="sub">Hanya kamu yang bisa melihat daftar ini.</p>
+      <p class="sub">Hanya kamu yang bisa melihat daftar ini. Setiap jurnal juga tertaut ke pencarian Google Scholar &amp; ResearchGate untuk referensi ilmiah pendukung.</p>
       <div id="journalList"><p class="empty-note">Memuat jurnal…</p></div>
     </div>
   </div>
@@ -506,6 +521,14 @@
             <option value="media sosial">Media Sosial</option>
             <option value="formal">Formal / Akademik</option>
           </select>
+        </div>
+        <div class="apikey-box">
+          <label for="userApiKey">API Key Gemini (opsional)</label>
+          <div class="apikey-row">
+            <input type="password" id="userApiKey" placeholder="Tempel API key kamu di sini" oninput="onApiKeyChange()">
+            <button type="button" class="apikey-toggle" onclick="toggleApiKeyVisible()" id="apikeyToggleBtn">👁</button>
+          </div>
+          <span class="apikey-hint" id="apikeyHint">Isi kalau kuota bawaan sedang penuh/limit. Key hanya dipakai untuk sesi ini, tidak disimpan permanen.</span>
         </div>
       </div>
       <div class="chat-main">
@@ -667,25 +690,38 @@ async function loadMe(){
 }
 
 /* ---------- resources ---------- */
-const videos=[
-  {title:'Bahasa Gaul vs Bahasa Baku',icon:'▶'},
-  {title:'Etika Berbahasa di Media Sosial',icon:'▶'},
-  {title:'Yuk, Kenalan dengan Tanda Baca',icon:'▶'},
-  {title:'Menulis Caption yang Baik & Benar',icon:'▶'}
-];
+const videoIds=['c3y70lYLc9s','Vs81fWlLBlo','wKfPJdjiauw','nhjSgk-smpQ','HeoIhEkupMU','3M8ZxQiK4qo','ajdEBNXuO7Q','6JRPpsJLSr4'];
 const ebooks=[
   {title:'Panduan Ejaan Bahasa Indonesia (EYD V)',url:'https://badanbahasa.kemdikbud.go.id'},
   {title:'Menulis Jurnal yang Baik',url:'#'},
   {title:'Kamus Istilah Media Sosial',url:'#'},
   {title:'Etika Berkomunikasi Digital',url:'#'}
 ];
-function renderResources(){
-  const vg=document.getElementById('videoGrid'); vg.innerHTML='';
-  videos.forEach(v=>{
+async function renderVideos(){
+  const vg=document.getElementById('videoGrid');
+  vg.innerHTML='<p class="empty-note">Memuat video…</p>';
+  const items=await Promise.all(videoIds.map(async id=>{
+    const watchUrl='https://youtu.be/'+id;
+    const thumb='https://img.youtube.com/vi/'+id+'/hqdefault.jpg';
+    let title='Video Pembelajaran Kebahasaan', author='YouTube';
+    try{
+      const r=await fetch('https://www.youtube.com/oembed?url='+encodeURIComponent(watchUrl)+'&format=json');
+      if(r.ok){ const d=await r.json(); title=d.title||title; author=d.author_name||author; }
+    }catch(e){ /* fallback ke judul umum jika oEmbed gagal (mis. offline) */ }
+    return {watchUrl,thumb,title,author};
+  }));
+  vg.innerHTML='';
+  items.forEach(v=>{
     const d=document.createElement('div'); d.className='video-thumb';
-    d.innerHTML=`<div class="box">${v.icon}</div><div class="cap">${escapeHtml(v.title)}<br><span style="opacity:.7;">Contoh video, Sumber: YouTube</span></div>`;
+    d.innerHTML=`<a href="${v.watchUrl}" target="_blank" rel="noopener">
+        <div class="box" style="background-image:url('${v.thumb}')"><span class="playbtn">▶</span></div>
+      </a>
+      <div class="cap">${escapeHtml(v.title)}<br><span class="src">${escapeHtml(v.author)} · YouTube</span></div>`;
     vg.appendChild(d);
   });
+}
+function renderResources(){
+  renderVideos();
   const eg=document.getElementById('ebookGrid'); eg.innerHTML='';
   ebooks.forEach(e=>{
     const d=document.createElement('div'); d.className='ebook-card';
@@ -696,32 +732,19 @@ function renderResources(){
 renderResources();
 
 /* ---------- KBBI ---------- */
-async function searchKbbi(){
-  const q=document.getElementById('kbbiInput').value.trim();
-  const box=document.getElementById('kbbiResult');
-  if(!q){box.classList.remove('show');return;}
-  box.classList.add('show');
-  box.innerHTML='<p>Mencari entri KBBI…</p>';
-  try{
-    const r=await fetch(API+'/kbbi/search?q='+encodeURIComponent(q));
-    const data=await r.json();
-    if(data.sourceUrl){
-      let html='<p><strong>'+escapeHtml(q)+'</strong></p>';
-      if(data.entries && data.entries.length){
-        html+='<div style="margin-top:10px;">';
-        data.entries.slice(0,8).forEach(e=>{
-          html+=`<div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.15)"><strong>${escapeHtml(e.lemma||e.word||'')}</strong><br><span>${escapeHtml(e.definition||e.arti||'')}</span></div>`;
-        });
-        html+='</div>';
-      }
-      html+=`<div style="margin-top:12px;"><a href="${data.sourceUrl}" target="_blank" rel="noopener">Buka sumber KBBI resmi →</a></div>`;
-      box.innerHTML=html;
-    }else{
-      box.innerHTML=`<p>Belum ada koneksi data kamus lokal/API. <a href="${data.officialUrl||'https://kbbi.kemdikbud.go.id'}" target="_blank" rel="noopener">Buka KBBI Daring resmi →</a></p>`;
-    }
-  }catch(e){
-    box.innerHTML='<p>KBBI sedang tidak dapat diakses. Silakan coba lagi atau buka <a href="https://kbbi.kemdikbud.go.id" target="_blank" rel="noopener">KBBI Daring resmi →</a></p>';
+async function searchKbbi() {
+  const input = document.getElementById('kbbiInput');
+  const q = input.value.trim();
+
+  if (!q) {
+    return;
   }
+
+  const url =
+    'https://kbbi.kemendikdasmen.go.id/entri/' +
+    encodeURIComponent(q);
+
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 function goKbbiFromHome(){
   const val=document.getElementById('homeKbbiInput').value.trim();
@@ -767,9 +790,17 @@ async function refreshJournalUI(){
   entries.forEach(en=>{
     const words=en.body.trim().split(/\s+/).filter(Boolean).length;
     const div=document.createElement('div');div.className='jitem';
+    const scholarUrl='https://scholar.google.com/scholar?q='+encodeURIComponent(en.title);
+    const rgateUrl='https://www.researchgate.net/search?q='+encodeURIComponent(en.title);
     div.innerHTML=`<div class="jtitle">${escapeHtml(en.title)}</div>
       <div class="jmeta"><span>${escapeHtml(en.date)}</span><span>${words} kata</span></div>
-      <div class="jactions"><button class="use">Kirim ke AI Chatbot →</button><button class="del">Hapus</button></div>`;
+      <div class="jactions">
+        <button class="use">Kirim ke AI Chatbot →</button>
+        <a class="scholar" href="${scholarUrl}" target="_blank" rel="noopener">Google Scholar ↗</a>
+        <a class="rgate" href="${rgateUrl}" target="_blank" rel="noopener">ResearchGate ↗</a>
+        <button class="del">Hapus</button>
+      </div>
+      <div class="refnote">Cari referensi ilmiah terkait judul jurnalmu di Google Scholar atau ResearchGate.</div>`;
     div.querySelector('.use').onclick=()=>useInChatbot(en.id);
     div.querySelector('.del').onclick=()=>deleteJournal(en.id);
     listEl.appendChild(div);
@@ -827,6 +858,20 @@ function formatMessage(text){
   safe=safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
   return safe;
 }
+/* ---------- API key pribadi (opsional) ---------- */
+let userApiKey='';
+function onApiKeyChange(){
+  userApiKey=document.getElementById('userApiKey').value.trim();
+  document.getElementById('apikeyHint').classList.remove('warn');
+  document.getElementById('apikeyHint').textContent='Isi kalau kuota bawaan sedang penuh/limit. Key hanya dipakai untuk sesi ini, tidak disimpan permanen.';
+}
+function toggleApiKeyVisible(){
+  const inp=document.getElementById('userApiKey');
+  const btn=document.getElementById('apikeyToggleBtn');
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁';
+}
 async function checkOriginality(text){
   const entries=await getAllJournals();let maxSim=0,matchTitle='';
   const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').split(/\s+/).filter(w=>w.length>3);
@@ -851,9 +896,20 @@ Tugas: koreksi EYD/PUEBI dan tata bahasa jika pengguna memberi teks; jika bertan
 Mode: ${mode}. Konteks: ${ctx}. Catatan orisinalitas: ${origNote}
 Jawab dalam Bahasa Indonesia, ringkas, terstruktur, ramah. Gunakan **teks tebal** untuk bagian penting.`;
   try{
-    const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:currentMessages,systemPrompt,mode,ctx,conversationId:currentConvId})});
-    const data=await r.json();if(!r.ok)throw new Error(data.error||'AI gagal memproses.');
+    const headers={'Content-Type':'application/json'};
+    if(userApiKey) headers['X-Gemini-Api-Key']=userApiKey;
+    const r=await fetch(API+'/chat',{method:'POST',headers,
+      body:JSON.stringify({messages:currentMessages,systemPrompt,mode,ctx,conversationId:currentConvId,apiKey:userApiKey||undefined})});
+    const data=await r.json();
+    if(!r.ok){
+      const msg=data.error||'AI gagal memproses.';
+      if(/limit|kuota|quota|429|rate/i.test(msg) && !userApiKey){
+        const hint=document.getElementById('apikeyHint');
+        hint.textContent='Kuota bawaan sedang penuh. Coba isi API key Gemini pribadimu di atas.';
+        hint.classList.add('warn');
+      }
+      throw new Error(msg);
+    }
     currentMessages.push({role:'assistant',text:data.text});currentConvId=data.conversationId;
     renderMessages();status.textContent='';refreshConvList();
   }catch(e){console.error(e);status.textContent=e.message||'Terjadi kendala saat menghubungi AI.';}

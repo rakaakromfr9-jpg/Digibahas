@@ -133,14 +133,79 @@ app.get("/api/conversations/:id",auth,(req,res)=>{
 });
 
 /* AI */
-const gemini = process.env.GEMINI_API_KEY
+const defaultGemini = process.env.GEMINI_API_KEY
   ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
   : null;
 
+// Cache client per user-supplied key selama proses server hidup,
+// supaya tidak bikin instance GoogleGenAI baru di setiap request.
+const userGeminiCache = new Map();
+function getGeminiClient(userApiKey) {
+  if (!userApiKey) return defaultGemini;
+  if (!userGeminiCache.has(userApiKey)) {
+    userGeminiCache.set(userApiKey, new GoogleGenAI({ apiKey: userApiKey }));
+  }
+  return userGeminiCache.get(userApiKey);
+}
+
+/**
+ * Panggil Gemini untuk satu balasan chat.
+ * Coba Interactions API dulu (endpoint baru Google, didesain untuk
+ * auth key berformat "AQ." yang sering ditolak oleh generateContent).
+ * Kalau SDK yang terpasang belum punya .interactions, atau endpoint itu
+ * tetap gagal, otomatis fallback ke generateContent (cara lama) supaya
+ * chatbot tidak mati total.
+ */
+async function callGemini(gemini, { messages, systemPrompt, model }) {
+  const sysText = String(systemPrompt || "Jawab dalam Bahasa Indonesia.");
+
+  if (gemini.interactions && typeof gemini.interactions.create === "function") {
+    try {
+      // Interactions API belum tentu mendukung array pesan ber-role seperti
+      // generateContent, jadi riwayat percakapan digabung jadi satu teks.
+      const transcript = messages
+        .map((m) => (m.role === "assistant" ? "Asisten: " : "Pengguna: ") + String(m.text || ""))
+        .join("\n\n");
+
+      const interaction = await gemini.interactions.create({
+        model,
+        input: transcript,
+        system_instruction: sysText,
+        generation_config: { max_output_tokens: 1200 }
+      });
+
+      const text = String(interaction?.output_text || "").trim();
+      if (text) return text;
+      console.warn("Interactions API sukses tapi output kosong, fallback ke generateContent.");
+    } catch (err) {
+      console.warn("Interactions API gagal, fallback ke generateContent:", err?.message || err);
+    }
+  }
+
+  // Fallback: cara lama.
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: String(m.text || "") }]
+  }));
+
+  const response = await gemini.models.generateContent({
+    model,
+    contents,
+    config: { systemInstruction: sysText, maxOutputTokens: 1200 }
+  });
+
+  return String(response.text || "").trim();
+}
+
 app.post("/api/chat", auth, async (req, res) => {
+  const userApiKey = String(
+    req.headers["x-gemini-api-key"] || req.body?.apiKey || ""
+  ).trim();
+  const gemini = getGeminiClient(userApiKey);
+
   if (!gemini) {
     return res.status(503).json({
-      error: "GEMINI_API_KEY belum diisi di file .env."
+      error: "GEMINI_API_KEY belum diisi di file .env, dan kamu belum memasukkan API key pribadi."
     });
   }
 
@@ -153,28 +218,12 @@ app.post("/api/chat", auth, async (req, res) => {
   }
 
   try {
-    const contents = messages.map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [
-        {
-          text: String(m.text || "")
-        }
-      ]
-    }));
-
-    const response = await gemini.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-      contents,
-      config: {
-        systemInstruction:
-          String(systemPrompt || "Jawab dalam Bahasa Indonesia."),
-        maxOutputTokens: 1200
-      }
-    });
-
     const text =
-      String(response.text || "").trim() ||
-      "Maaf, AI tidak menghasilkan jawaban.";
+      (await callGemini(gemini, {
+        messages,
+        systemPrompt,
+        model: process.env.GEMINI_MODEL || "gemini-3.6-flash"
+      })) || "Maaf, AI tidak menghasilkan jawaban.";
 
     let convId = req.body.conversationId;
     const oldMessages = messages;
@@ -246,8 +295,13 @@ app.post("/api/chat", auth, async (req, res) => {
   } catch (e) {
     console.error("Gemini error:", e);
 
-    res.status(500).json({
-      error: "Gemini gagal memproses permintaan."
+    const raw = String(e?.message || e || "");
+    const isRateLimit = /429|RESOURCE_EXHAUSTED|quota|rate limit/i.test(raw);
+
+    res.status(isRateLimit ? 429 : 500).json({
+      error: isRateLimit
+        ? "Kuota API Gemini sedang limit/penuh. Coba lagi nanti, atau isi API key Gemini pribadimu di sidebar."
+        : "Gemini gagal memproses permintaan."
     });
   }
 });
