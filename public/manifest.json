@@ -6,11 +6,17 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "window-controls-overlay",
+    "minimal-ui"
+  ],
   "orientation": "portrait-primary",
-  "background_color": "#FFFFFF",
+  "background_color": "#16233F",
   "theme_color": "#16233F",
   "lang": "id",
   "dir": "ltr",
+  "prefer_related_applications": false,
   "categories": [
     "education",
     "productivity",
@@ -47,7 +53,7 @@
       "name": "Tanya AI Bahasa",
       "short_name": "AI Chat",
       "description": "Buka asisten percakapan tata bahasa AI",
-      "url": "/#ai",
+      "url": "/#chatbot",
       "icons": [
         {
           "src": "/icons/icon-192.png",

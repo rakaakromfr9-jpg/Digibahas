@@ -1,27 +1,15 @@
 import assert from "node:assert";
 import http from "node:http";
-import fs from "node:fs";
 
 async function testPWA() {
-  console.log("Starting Digibahas server for PWA validation...");
+  console.log("Starting Digibahas server for Mobile PWA validation...");
 
-  // Import app from server.js if possible or spawn server
   const env = { ...process.env, PORT: "3456", JWT_SECRET: "test-secret-key-123456" };
   const { spawn } = await import("node:child_process");
 
   const serverProcess = spawn("node", ["server.js"], {
     env,
     stdio: ["pipe", "pipe", "pipe"]
-  });
-
-  let serverStarted = false;
-
-  serverProcess.stdout.on("data", (data) => {
-    // console.log("[Server]", data.toString());
-  });
-
-  serverProcess.stderr.on("data", (data) => {
-    // console.error("[Server Err]", data.toString());
   });
 
   // Wait for server to listen
@@ -53,7 +41,10 @@ async function testPWA() {
     assert.ok(htmlText.includes('pwaInstallBtn'), "Missing pwaInstallBtn in HTML");
     assert.ok(htmlText.includes('offlineBanner'), "Missing offlineBanner in HTML");
     assert.ok(htmlText.includes('/sw.js'), "Missing service worker registration in HTML");
-    console.log("✔ Root HTML has PWA tags, manifest, and script");
+    assert.ok(htmlText.includes('id="bottomNav"'), "Missing Mobile Bottom Navigation in HTML");
+    assert.ok(htmlText.includes('id="mobileInstallBanner"'), "Missing Mobile Install Banner in HTML");
+    assert.ok(htmlText.includes('viewport-fit=cover'), "Missing mobile viewport-fit=cover in HTML");
+    console.log("✔ Root HTML has Mobile PWA UI elements, bottom navigation, and viewport settings");
 
     // Test 2: manifest.webmanifest
     console.log("Checking GET /manifest.webmanifest ...");
@@ -67,8 +58,9 @@ async function testPWA() {
     const manifestJson = JSON.parse(resManifest.body.toString("utf8"));
     assert.strictEqual(manifestJson.name, "DIGIBAHAS — Gerakan Bijak Berbahasa");
     assert.strictEqual(manifestJson.display, "standalone");
+    assert.strictEqual(manifestJson.orientation, "portrait-primary");
     assert.ok(manifestJson.icons.length >= 3, "Manifest must have at least 3 icons");
-    console.log("✔ Web App Manifest is valid and served correctly");
+    console.log("✔ Web App Manifest is valid for mobile PWA standalone experience");
 
     // Test 3: manifest.json alias
     console.log("Checking GET /manifest.json ...");
@@ -108,7 +100,6 @@ async function testPWA() {
       const resIcon = await get(icon.path);
       assert.strictEqual(resIcon.statusCode, 200);
       const buf = resIcon.body;
-      // Check PNG magic bytes: 89 50 4E 47 0D 0A 1A 0A
       assert.strictEqual(buf[0], 0x89);
       assert.strictEqual(buf[1], 0x50);
       assert.strictEqual(buf[2], 0x4e);
@@ -117,7 +108,6 @@ async function testPWA() {
       assert.strictEqual(buf[5], 0x0a);
       assert.strictEqual(buf[6], 0x1a);
       assert.strictEqual(buf[7], 0x0a);
-      // IHDR width and height check
       const w = buf.readUInt32BE(16);
       const h = buf.readUInt32BE(20);
       assert.strictEqual(w, icon.size);
@@ -132,9 +122,9 @@ async function testPWA() {
     assert.ok(resSvg.body.toString("utf8").includes("<svg"));
     console.log("✔ SVG icon is served correctly");
 
-    console.log("\n=================================");
-    console.log("ALL PWA TESTS PASSED SUCCESSFULLY!");
-    console.log("=================================\n");
+    console.log("\n========================================");
+    console.log("ALL MOBILE PWA TESTS PASSED SUCCESSFULLY!");
+    console.log("========================================\n");
   } finally {
     serverProcess.kill();
   }

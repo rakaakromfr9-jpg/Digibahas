@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#16233F">
 <meta name="description" content="DIGIBAHAS — Digitalisasi Gerakan Bijak Berbahasa. Asisten AI Bahasa Indonesia, KBBI, kuis, dan jurnal.">
 <meta name="mobile-web-app-capable" content="yes">
@@ -297,6 +297,282 @@
   .foot-meta{max-width:1220px; margin:30px auto 0; font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:#7787A2; border-top:1px solid rgba(255,255,255,0.12); padding-top:18px;}
 
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ==================== MOBILE PWA STYLES ==================== */
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* Bottom Navigation Bar */
+  .bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 24px rgba(22, 35, 63, 0.08);
+    z-index: 100;
+    padding: 6px 10px calc(6px + var(--safe-bottom));
+    justify-content: space-around;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .bnav-btn {
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 6px;
+    border-radius: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex: 1;
+    max-width: 72px;
+    transition: color 0.15s ease;
+    position: relative;
+  }
+
+  .bnav-btn svg {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.2s ease;
+  }
+
+  .bnav-btn span {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: color 0.15s ease;
+  }
+
+  .bnav-btn.active {
+    color: var(--teal-deep);
+  }
+
+  .bnav-btn.active svg {
+    stroke: var(--teal-deep);
+    transform: translateY(-2px) scale(1.12);
+  }
+
+  .bnav-btn.active span {
+    color: var(--teal-deep);
+    font-weight: 700;
+  }
+
+  .bnav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 3px;
+    background: var(--teal);
+    border-radius: 99px;
+  }
+
+  /* Mobile floating install bar */
+  .mobile-install-banner {
+    display: none;
+    position: fixed;
+    bottom: calc(72px + var(--safe-bottom));
+    left: 14px;
+    right: 14px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 28px rgba(22, 35, 63, 0.35);
+    z-index: 95;
+    align-items: center;
+    gap: 12px;
+    animation: slideUpBanner 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes slideUpBanner {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .mobile-install-banner img {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .mobile-install-banner .mib-info {
+    flex: 1;
+  }
+  .mobile-install-banner .mib-info strong {
+    display: block;
+    font-size: 0.88rem;
+    font-family: 'Sora', sans-serif;
+    color: #fff;
+  }
+  .mobile-install-banner .mib-info span {
+    font-size: 0.73rem;
+    color: var(--mint);
+  }
+  .mobile-install-banner .mib-action {
+    background: var(--mint);
+    color: var(--navy);
+    border: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .mobile-install-banner .mib-dismiss {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 1.25rem;
+    padding: 4px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* iOS Install Guide Sheet */
+  .ios-install-sheet {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(11,20,40,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 120;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .ios-install-sheet.show {
+    display: flex;
+  }
+  .ios-card {
+    background: #fff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 22px calc(24px + var(--safe-bottom));
+    animation: slideUpModal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+  .ios-card h3 {
+    font-family: 'Sora', sans-serif;
+    color: var(--navy);
+    font-size: 1.15rem;
+    margin: 0 0 10px;
+  }
+  .ios-card ol {
+    margin: 14px 0 20px;
+    padding-left: 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .ios-card ol li {
+    margin-bottom: 8px;
+  }
+  .ios-card button.close-ios {
+    width: 100%;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    padding: 12px 0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding-bottom: calc(70px + var(--safe-bottom));
+    }
+    .bottom-nav {
+      display: flex;
+    }
+    .mobile-tabs {
+      display: none !important;
+    }
+    header {
+      padding-top: var(--safe-top);
+    }
+    .headbar {
+      padding: 12px 16px;
+    }
+    .logo {
+      font-size: 1.15rem;
+    }
+    .beranda-top {
+      padding: 24px 16px 12px;
+    }
+    .beranda-top h1 {
+      font-size: 1.6rem;
+      line-height: 1.25;
+    }
+    .hero-cards {
+      padding: 0 16px 32px;
+      margin-top: 18px;
+      gap: 14px;
+    }
+    section.block {
+      padding: 32px 16px;
+    }
+    .pillars {
+      gap: 14px;
+    }
+    .pillar {
+      padding: 18px 16px;
+    }
+    .chat-wrap {
+      padding: 12px 10px 24px;
+    }
+    .chat-shell {
+      border-radius: 16px;
+      min-height: 480px;
+    }
+    .messages-box {
+      padding: 14px 12px;
+      max-height: 52vh;
+    }
+    .chat-input-row {
+      padding: 10px 12px;
+    }
+    .chat-input-row textarea {
+      font-size: 0.92rem;
+    }
+
+    /* Bottom Sheet Modal for Mobile */
+    .modal-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .modal-card {
+      max-width: 100%;
+      border-radius: 24px 24px 0 0;
+      padding: 26px 20px calc(24px + var(--safe-bottom));
+      animation: slideUpModal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUpModal {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    footer {
+      padding: 32px 20px calc(32px + var(--safe-bottom));
+    }
+  }
 </style>
 </head>
 <body>
@@ -1004,6 +1280,105 @@ window.addEventListener('hashchange', handleShortcutHash);
 if (window.location.hash) {
   handleShortcutHash();
 }
+
+// Mobile Install Manager & Standalone Detection
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const mobileBanner = document.getElementById('mobileInstallBanner');
+const mibInstallBtn = document.getElementById('mibInstallAction');
+const mibDismissBtn = document.getElementById('mibDismiss');
+const iosSheet = document.getElementById('iosInstallSheet');
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+if (!isStandalone && !sessionStorage.getItem('dismiss_install_banner')) {
+  // Show mobile banner after small delay if on mobile
+  if (window.innerWidth <= 768) {
+    setTimeout(() => {
+      if (mobileBanner && !isStandalone) mobileBanner.style.display = 'flex';
+    }, 2500);
+  }
+}
+
+if (mibInstallBtn) {
+  mibInstallBtn.addEventListener('click', async () => {
+    if (isIOS) {
+      if (iosSheet) iosSheet.classList.add('show');
+    } else if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      console.log('[PWA] Mobile prompt choice:', choice?.outcome);
+      deferredInstallPrompt = null;
+      if (mobileBanner) mobileBanner.style.display = 'none';
+    } else {
+      alert('Untuk memasang Digibahas di Android, buka menu Chrome (titik tiga) lalu pilih "Instal aplikasi" atau "Tambahkan ke Layar Utama".');
+    }
+  });
+}
+
+if (mibDismissBtn) {
+  mibDismissBtn.addEventListener('click', () => {
+    if (mobileBanner) mobileBanner.style.display = 'none';
+    sessionStorage.setItem('dismiss_install_banner', '1');
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (mobileBanner) mobileBanner.style.display = 'none';
+});
 </script>
+
+<!-- ================= MOBILE BOTTOM NAVIGATION ================= -->
+<nav class="bottom-nav" id="bottomNav">
+  <button data-page="beranda" class="bnav-btn active" aria-label="Beranda">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Beranda</span>
+  </button>
+  <button data-page="belajar" class="bnav-btn" aria-label="Belajar">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+    <span>Belajar</span>
+  </button>
+  <button data-page="jurnal" class="bnav-btn" aria-label="Jurnal">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>Jurnal</span>
+  </button>
+  <button data-page="kbbi" class="bnav-btn" aria-label="KBBI">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>KBBI</span>
+  </button>
+  <button data-page="chatbot" class="bnav-btn" aria-label="AI Chat">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>AI Chat</span>
+  </button>
+</nav>
+
+<!-- ================= MOBILE INSTALL PROMPT BANNER ================= -->
+<div class="mobile-install-banner" id="mobileInstallBanner">
+  <img src="/icons/icon-192.png" alt="Digibahas App Icon">
+  <div class="mib-info">
+    <strong>Pasang Aplikasi Digibahas</strong>
+    <span>Akses lebih cepat langsung dari layar utama</span>
+  </div>
+  <button class="mib-action" id="mibInstallAction">Pasang</button>
+  <button class="mib-dismiss" id="mibDismiss" aria-label="Tutup">&times;</button>
+</div>
+
+<!-- ================= iOS INSTALL GUIDE SHEET ================= -->
+<div class="ios-install-sheet" id="iosInstallSheet">
+  <div class="ios-card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <img src="/icons/icon-192.png" width="44" height="44" style="border-radius:12px;" alt="Logo">
+      <div>
+        <h3 style="margin:0;">Pasang di iPhone / iPad</h3>
+        <span style="font-size:0.8rem;color:var(--ink-soft);">Tambahkan ke Layar Utama</span>
+      </div>
+    </div>
+    <ol>
+      <li>Ketuk ikon <strong>Bagikan (Share)</strong> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> di bagian bawah Safari.</li>
+      <li>Gulir ke bawah dan pilih <strong>"Tambah ke Layar Utama" (Add to Home Screen)</strong> ➕.</li>
+      <li>Ketuk <strong>"Tambah" (Add)</strong> di pojok kanan atas.</li>
+    </ol>
+    <button class="close-ios" onclick="document.getElementById('iosInstallSheet').classList.remove('show')">Mengerti</button>
+  </div>
+</div>
+
 </body>
 </html>
