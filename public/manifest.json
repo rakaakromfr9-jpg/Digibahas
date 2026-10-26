@@ -1,0 +1,83 @@
+{
+  "id": "/?source=pwa",
+  "name": "DIGIBAHAS — Gerakan Bijak Berbahasa",
+  "short_name": "Digibahas",
+  "description": "Digitalisasi Gerakan Bijak Berbahasa — Asisten AI Bahasa Indonesia, KBBI, kuis, dan jurnal.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFFFF",
+  "theme_color": "#16233F",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tanya AI Bahasa",
+      "short_name": "AI Chat",
+      "description": "Buka asisten percakapan tata bahasa AI",
+      "url": "/#ai",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Kamus KBBI",
+      "short_name": "KBBI",
+      "description": "Cari arti dan ejaan kata baku",
+      "url": "/#kbbi",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Jurnal Bahasa",
+      "short_name": "Jurnal",
+      "description": "Tulis atau baca catatan jurnal kebahasaan",
+      "url": "/#jurnal",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

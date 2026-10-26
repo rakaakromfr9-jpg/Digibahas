@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16233F">
+<meta name="description" content="DIGIBAHAS — Digitalisasi Gerakan Bijak Berbahasa. Asisten AI Bahasa Indonesia, KBBI, kuis, dan jurnal.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Digibahas">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+<link rel="alternate icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>DIGIBAHAS — Digitalisasi Gerakan Bijak Berbahasa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -305,6 +315,9 @@
   </defs>
 </svg>
 
+<div id="offlineBanner" style="display:none;background:#D6473C;color:#fff;text-align:center;padding:10px 16px;font-size:0.88rem;font-weight:600;position:sticky;top:0;z-index:999;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+  ⚠️ Anda sedang offline. Fitur AI dan kueri daring memerlukan koneksi internet aktif.
+</div>
 <header>
   <div class="headbar">
     <div class="logo">DIGIBAHAS</div>
@@ -315,6 +328,9 @@
       <button data-page="kbbi">Akses KBBI</button>
       <button data-page="chatbot">AI Chatbot</button>
     </nav>
+    <button id="pwaInstallBtn" class="cta-mini" style="display:none;background:var(--teal-deep);margin-right:8px;align-items:center;gap:6px;" title="Pasang Digibahas di perangkat ini">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Pasang Aplikasi
+    </button>
     <button class="cta-mini" id="authButton" onclick="openAuth()">Masuk/Daftar</button>
   </div>
   <div class="mobile-tabs" id="navTabsMobile">
@@ -921,6 +937,73 @@ function escapeHtml(str){
 
 /* ---------- init ---------- */
 loadMe();
+
+/* ---------- PWA: Service Worker, Offline Status & Install Prompt ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then((reg) => {
+        console.log('[PWA] Service Worker terdaftar dengan scope:', reg.scope);
+      })
+      .catch((err) => {
+        console.warn('[PWA] Pendaftaran Service Worker gagal:', err);
+      });
+  });
+}
+
+// Online / Offline status notification
+const offlineBannerEl = document.getElementById('offlineBanner');
+function updateOnlineStatus() {
+  if (offlineBannerEl) {
+    offlineBannerEl.style.display = navigator.onLine ? 'none' : 'block';
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+// PWA Install prompt handling
+let deferredInstallPrompt = null;
+const pwaInstallButton = document.getElementById('pwaInstallBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if (pwaInstallButton) {
+    pwaInstallButton.style.display = 'inline-flex';
+  }
+});
+
+if (pwaInstallButton) {
+  pwaInstallButton.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    console.log('[PWA] Pilihan instalasi pengguna:', choice?.outcome);
+    deferredInstallPrompt = null;
+    pwaInstallButton.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] Aplikasi Digibahas berhasil diinstal.');
+  if (pwaInstallButton) pwaInstallButton.style.display = 'none';
+  deferredInstallPrompt = null;
+});
+
+// Deep-linking shortcuts (#chatbot, #kbbi, #jurnal, #belajar, #beranda)
+function handleShortcutHash() {
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  if (['beranda', 'belajar', 'jurnal', 'kbbi', 'chatbot'].includes(hash)) {
+    goPage(hash);
+  } else if (hash === 'ai') {
+    goPage('chatbot');
+  }
+}
+window.addEventListener('hashchange', handleShortcutHash);
+if (window.location.hash) {
+  handleShortcutHash();
+}
 </script>
 </body>
 </html>

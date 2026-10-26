@@ -45,7 +45,18 @@ CREATE TABLE IF NOT EXISTS conversations(
 
 app.use(express.json({limit:"1mb"}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname,"public")));
+// PWA specific headers for Service Worker and Web Manifest
+app.use((req, res, next) => {
+  if (req.path === "/sw.js") {
+    res.setHeader("Service-Worker-Allowed", "/");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  } else if (req.path.endsWith(".webmanifest")) {
+    res.setHeader("Content-Type", "application/manifest+json; charset=UTF-8");
+  }
+  next();
+});
+
+app.use(express.static(path.join(__dirname, "public")));
 
 function signUser(user){
   return jwt.sign({sub:user.id},JWT_SECRET,{expiresIn:"7d"});

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koneksi Terputus — DIGIBAHAS</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <meta name="theme-color" content="#16233F">
+  <style>
+    :root {
+      --navy: #16233F;
+      --navy-2: #0B2A52;
+      --teal: #0E8C93;
+      --teal-light: #CDEFEC;
+      --mint: #7FE9DD;
+      --grey-bg: #F4F6F8;
+      --ink: #1D2333;
+      --ink-soft: #5B6472;
+      --white: #FFFFFF;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--grey-bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: var(--white);
+      max-width: 480px;
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 16px 36px rgba(22, 35, 63, 0.08);
+      padding: 40px 32px;
+      text-align: center;
+      border: 1px solid rgba(22, 35, 63, 0.08);
+    }
+    .icon-wrap {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #16233F, #0E8C93);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(14, 140, 147, 0.28);
+    }
+    .icon-wrap svg {
+      width: 48px;
+      height: 48px;
+      fill: none;
+      stroke: var(--mint);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 0.96rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+    }
+    .badge-offline {
+      display: inline-block;
+      padding: 6px 14px;
+      background: #FFF1F0;
+      color: #D6473C;
+      font-weight: 600;
+      font-size: 0.82rem;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      border: 1px solid #FFCCC7;
+    }
+    .btn-retry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-retry:hover {
+      background: var(--navy-2);
+      transform: translateY(-1px);
+    }
+    .btn-retry:active {
+      transform: translateY(0);
+    }
+    .tips {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #EAECEF;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      text-align: left;
+    }
+    .tips ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    .tips li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-wrap">
+      <!-- Wi-Fi off icon -->
+      <svg viewBox="0 0 24 24">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+
+    <span class="badge-offline">Status: Luar Jaringan (Offline)</span>
+    <h1>Sambungan Terputus</h1>
+    <p>Aplikasi <strong>DIGIBAHAS</strong> sedang tidak dapat terhubung ke server atau jaringan internet Anda tidak aktif.</p>
+
+    <button class="btn-retry" onclick="checkAndReload()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+      </svg>
+      Coba Muat Ulang
+    </button>
+
+    <div class="tips">
+      <strong>Catatan penggunaan offline:</strong>
+      <ul>
+        <li>Aplikasi akan otomatis memuat ulang begitu koneksi kembali aktif.</li>
+        <li>Fitur asisten AI dan kueri daring membutuhkan koneksi internet.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function checkAndReload() {
+      if (navigator.onLine) {
+        window.location.href = '/';
+      } else {
+        window.location.reload();
+      }
+    }
+    // Auto redirect when back online
+    window.addEventListener('online', () => {
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>
